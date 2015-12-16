@@ -5,7 +5,7 @@ import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.rawad.gamehelpers.game_manager.Game;
+import com.rawad.gamehelpers.gamemanager.Game;
 
 public class GameIcon extends JPanel {
 

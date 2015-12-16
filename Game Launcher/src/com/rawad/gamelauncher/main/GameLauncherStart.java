@@ -18,14 +18,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import com.rawad.ballsimulator.main.BallSimulator;
-import com.rawad.gamehelpers.game_manager.Game;
-import com.rawad.gamehelpers.game_manager.GameManager;
+import com.rawad.gamehelpers.gamemanager.Game;
+import com.rawad.gamehelpers.gamemanager.GameManager;
 import com.rawad.gamelauncher.gui.GameIcon;
 
 public class GameLauncherStart {
-	// 17:00
-
-	private static final GameManager gameLauncher = GameManager.instance();
+	
+	private static final GameManager gameManager = GameManager.instance();
 
 	private JFrame frmGameLauncher;
 	private JMenuBar menuBar;
@@ -60,8 +59,8 @@ public class GameLauncherStart {
 	 */
 	public GameLauncherStart() {
 
-		gameLauncher.registerGame(new BallSimulator());
-
+		gameManager.registerGame(new BallSimulator());
+		
 	}
 
 	/**
@@ -94,7 +93,7 @@ public class GameLauncherStart {
 		mntmExit.addActionListener(mntmActionListener);
 		mnOptions.add(mntmExit);
 
-		addGameIcons(gameLauncher.getGames());
+		addGameIcons(gameManager.getGames());
 
 	}
 
@@ -115,7 +114,7 @@ public class GameLauncherStart {
 
 	public void onClose() {
 
-		gameLauncher.onClose();
+		gameManager.onClose();
 
 		frmGameLauncher.dispose();
 
@@ -145,7 +144,7 @@ public class GameLauncherStart {
 
 			frmGameLauncher.setState(Frame.ICONIFIED);
 
-			gameLauncher.launchGame(source.getGame());
+			gameManager.launchGame(source.getGame(), true);
 
 		}
 
