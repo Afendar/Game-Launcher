@@ -144,7 +144,7 @@ public class GameLauncherStart {
 
 			frmGameLauncher.setState(Frame.ICONIFIED);
 
-			gameManager.launchGame(source.getGame(), true);
+			gameManager.launchGame(source.getGame());
 
 		}
 
