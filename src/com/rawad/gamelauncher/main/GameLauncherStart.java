@@ -18,8 +18,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import com.rawad.ballsimulator.main.BallSimulator;
-import com.rawad.gamehelpers.gamemanager.Game;
-import com.rawad.gamehelpers.gamemanager.GameManager;
+import com.rawad.gamehelpers.game.Game;
+import com.rawad.gamehelpers.game.GameManager;
 import com.rawad.gamelauncher.gui.GameIcon;
 
 public class GameLauncherStart {
