@@ -17,11 +17,11 @@ public class IconHolder extends JPanel {
 
 	public IconHolder(BufferedImage icon) {
 		this.icon = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-
+		
 		if (icon != null) {
 			this.icon = icon;
 		}
-
+		
 		setPreferredSize(new Dimension(this.icon.getWidth(),
 				this.icon.getHeight()));
 

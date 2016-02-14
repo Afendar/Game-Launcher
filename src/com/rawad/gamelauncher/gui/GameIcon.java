@@ -29,13 +29,14 @@ public class GameIcon extends JPanel {
 
 	private void initialize() {
 		setLayout(new BorderLayout(0, 0));
-
+		
 		iconHolder = new IconHolder(game.getIcon());
 		add(iconHolder, BorderLayout.CENTER);
-
+		
 		nameHolder = new JLabel();
 		nameHolder.setText(game.toString());
 		add(nameHolder, BorderLayout.SOUTH);
+		
 	}
 
 	public Game getGame() {

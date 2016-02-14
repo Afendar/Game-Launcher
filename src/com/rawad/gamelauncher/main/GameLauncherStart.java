@@ -17,43 +17,56 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import com.rawad.ballsimulator.client.Client;
 import com.rawad.ballsimulator.main.BallSimulator;
+import com.rawad.gamehelpers.display.DisplayManager;
 import com.rawad.gamehelpers.game.Game;
 import com.rawad.gamehelpers.game.GameManager;
+import com.rawad.gamehelpers.resources.ResourceManager;
 import com.rawad.gamelauncher.gui.GameIcon;
 
 public class GameLauncherStart {
 	
 	private static final GameManager gameManager = GameManager.instance();
-
+	
+	private static final Client client = new Client();
+	
 	private JFrame frmGameLauncher;
 	private JMenuBar menuBar;
 	private JMenu mnOptions;
 	private JMenuItem mntmExit;
-
+	
 	private MenuItemActionListener mntmActionListener;
 	private JPanel gameIconHolder;
-
+	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		ResourceManager.init(args);
+		
+		final GameLauncherStart window = new GameLauncherStart();
+		
 		EventQueue.invokeLater(new Runnable() {
+			
 			public void run() {
+				
 				try {
-
-					GameLauncherStart window = new GameLauncherStart();
-
+					
+					DisplayManager.init();
+					
 					window.initialize();
 					window.frmGameLauncher.setVisible(true);
-
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+		
 	}
-
+	
 	/**
 	 * Create the application.
 	 */
@@ -94,7 +107,7 @@ public class GameLauncherStart {
 		mnOptions.add(mntmExit);
 
 		addGameIcons(gameManager.getGames());
-
+		
 	}
 
 	private void addGameIcons(Game[] games) {
@@ -102,23 +115,23 @@ public class GameLauncherStart {
 		GameLaunchListener mouseListener = new GameLaunchListener();
 
 		for (Game game : games) {
-
+			
 			GameIcon gi = new GameIcon(game);
-
+			
 			gi.addMouseListener(mouseListener);
 			gameIconHolder.add(gi);
 
 		}
 
 	}
-
+	
 	public void onClose() {
-
-		gameManager.onClose();
-
+		
+		gameManager.getCurrentGame().requestStop();
+		
 		frmGameLauncher.dispose();
-
-		// System.exit(0);
+		
+//		System.exit(0);
 
 	}
 
@@ -136,27 +149,33 @@ public class GameLauncherStart {
 	}
 
 	private class GameLaunchListener extends MouseAdapter {
-
+		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-
-			GameIcon source = (GameIcon) e.getSource();
-
+			
+			Game gameToLaunch = ((GameIcon) e.getSource()).getGame();
+			
 			frmGameLauncher.setState(Frame.ICONIFIED);
-
-			gameManager.launchGame(source.getGame());
-
+			
+			initGameFrame(gameToLaunch);
+			
+			gameManager.launchGame(gameToLaunch, client);
+			
 		}
-
+		
 	}
-
+	
+	private void initGameFrame(Game game) {
+		
+	}
+	
 	private class WindowCloseListener extends WindowAdapter {
-
+		
 		@Override
 		public void windowClosing(WindowEvent e) {
 			onClose();
 		}
-
+		
 	}
-
+	
 }
