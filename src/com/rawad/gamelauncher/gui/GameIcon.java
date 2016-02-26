@@ -6,6 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.rawad.gamehelpers.game.Game;
+import com.rawad.gamehelpers.resources.ResourceManager;
 
 public class GameIcon extends JPanel {
 
@@ -30,7 +31,7 @@ public class GameIcon extends JPanel {
 	private void initialize() {
 		setLayout(new BorderLayout(0, 0));
 		
-		iconHolder = new IconHolder(game.getIcon());
+		iconHolder = new IconHolder(ResourceManager.getTexture(game.getIconLocation()));
 		add(iconHolder, BorderLayout.CENTER);
 		
 		nameHolder = new JLabel();
