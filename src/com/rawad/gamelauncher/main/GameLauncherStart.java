@@ -2,7 +2,6 @@ package com.rawad.gamelauncher.main;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +22,7 @@ import com.rawad.gamehelpers.display.DisplayManager;
 import com.rawad.gamehelpers.game.Game;
 import com.rawad.gamehelpers.game.GameManager;
 import com.rawad.gamehelpers.resources.ResourceManager;
+import com.rawad.gamehelpers.utils.Util;
 import com.rawad.gamelauncher.gui.GameIcon;
 
 public class GameLauncherStart {
@@ -48,7 +48,7 @@ public class GameLauncherStart {
 		
 		final GameLauncherStart window = new GameLauncherStart();
 		
-		EventQueue.invokeLater(new Runnable() {
+		Util.invokeAndWait(new Runnable() {// So that frame is initialized for later use.
 			
 			public void run() {
 				
@@ -57,6 +57,10 @@ public class GameLauncherStart {
 					DisplayManager.init();
 					
 					window.initialize();
+					
+					ResourceManager.loadAllTextures();
+					
+					window.frmGameLauncher.pack();
 					window.frmGameLauncher.setVisible(true);
 					
 				} catch (Exception e) {
@@ -75,37 +79,37 @@ public class GameLauncherStart {
 		gameManager.registerGame(new BallSimulator());
 		
 	}
-
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
 		frmGameLauncher = new JFrame();
 		frmGameLauncher.addWindowListener(new WindowCloseListener());
 		frmGameLauncher.getContentPane().setPreferredSize(
 				new Dimension(500, 400));
 		frmGameLauncher.getContentPane().setLayout(new BorderLayout(0, 0));
-
+		
 		gameIconHolder = new JPanel();
 		frmGameLauncher.getContentPane().add(gameIconHolder,
 				BorderLayout.CENTER);
 		frmGameLauncher.setTitle("Game Launcher");
-		frmGameLauncher.pack();
 		frmGameLauncher.setLocationRelativeTo(null);
 		frmGameLauncher.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
+		
 		menuBar = new JMenuBar();
 		frmGameLauncher.setJMenuBar(menuBar);
-
+		
 		mnOptions = new JMenu("Options");
 		menuBar.add(mnOptions);
-
+		
 		mntmActionListener = new MenuItemActionListener();
-
+		
 		mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(mntmActionListener);
 		mnOptions.add(mntmExit);
-
+		
 		addGameIcons(gameManager.getGames());
 		
 	}
@@ -113,8 +117,10 @@ public class GameLauncherStart {
 	private void addGameIcons(Game[] games) {
 
 		GameLaunchListener mouseListener = new GameLaunchListener();
-
-		for (Game game : games) {
+		
+		for(Game game: games) {
+			
+			game.registerTextures();
 			
 			GameIcon gi = new GameIcon(game);
 			
@@ -122,12 +128,14 @@ public class GameLauncherStart {
 			gameIconHolder.add(gi);
 
 		}
-
+		
+		frmGameLauncher.revalidate();
+		
 	}
 	
 	public void onClose() {
 		
-		gameManager.getCurrentGame().requestStop();
+//		gameManager.getCurrentGame().requestStop();// Really think game should stay open.
 		
 		frmGameLauncher.dispose();
 		
@@ -157,15 +165,9 @@ public class GameLauncherStart {
 			
 			frmGameLauncher.setState(Frame.ICONIFIED);
 			
-			initGameFrame(gameToLaunch);
-			
 			gameManager.launchGame(gameToLaunch, client);
 			
 		}
-		
-	}
-	
-	private void initGameFrame(Game game) {
 		
 	}
 	

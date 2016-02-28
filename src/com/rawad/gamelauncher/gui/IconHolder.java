@@ -2,37 +2,43 @@ package com.rawad.gamelauncher.gui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-public class IconHolder extends JPanel {
+import com.rawad.gamehelpers.resources.ResourceManager;
+import com.rawad.gamehelpers.resources.TextureResource;
 
+public class IconHolder extends JPanel {
+	
 	/**
-	 * 
+	 * Generated serial version UID.
 	 */
 	private static final long serialVersionUID = 6945210026482067764L;
-
-	private BufferedImage icon;
-
-	public IconHolder(BufferedImage icon) {
-		this.icon = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+	
+	private TextureResource icon;
+	
+	public IconHolder(final int iconLocation) {
 		
-		if (icon != null) {
-			this.icon = icon;
-		}
+		icon = ResourceManager.getTextureObject(iconLocation);//new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
 		
-		setPreferredSize(new Dimension(this.icon.getWidth(),
-				this.icon.getHeight()));
-
+		icon.setOnloadAction(new Runnable() {
+			
+			@Override
+			public void run() {
+				IconHolder.this.setPreferredSize(new Dimension(ResourceManager.getTexture(iconLocation).getWidth(), 
+						ResourceManager.getTexture(iconLocation).getHeight()));
+			}
+			
+		});
+		
 	}
-
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
-		g.drawImage(icon, 0, 0, null);
-
+		
+		g.drawImage(icon.getTexture(), 0, 0, null);
+		
 	}
-
+	
 }
