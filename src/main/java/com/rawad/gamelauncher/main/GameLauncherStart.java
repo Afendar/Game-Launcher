@@ -17,15 +17,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import com.rawad.ballsimulator.client.Client;
-import com.rawad.ballsimulator.main.BallSimulator;
-import com.rawad.gamehelpers.display.DisplayManager;
+import com.rawad.ballsimulator.game.BallSimulator;
 import com.rawad.gamehelpers.game.Game;
 import com.rawad.gamehelpers.game.GameManager;
 import com.rawad.gamehelpers.resources.ResourceManager;
 import com.rawad.gamehelpers.utils.Util;
 import com.rawad.gamelauncher.gui.GameIcon;
 
-public class GameLauncherStart {
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class GameLauncherStart extends Application {
 	
 	private static final GameManager gameManager = GameManager.instance();
 	
@@ -39,26 +41,22 @@ public class GameLauncherStart {
 	private MenuItemActionListener mntmActionListener;
 	private JPanel gameIconHolder;
 	
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		
-		ResourceManager.init(args);
+		ResourceManager.init(Util.parseCommandLineArguments(args));
 		
 		final GameLauncherStart window = new GameLauncherStart();
 		
-		Util.invokeAndWait(new Runnable() {// So that frame is initialized for later use.
-			
-			public void run() {
+//		Util.invokeAndWait(new Runnable() {// So that frame is initialized for later use.
+//			public void run() {
 				
 				try {
 					
-					DisplayManager.init();
+//					DisplayManager.init("");
 					
 					window.initialize();
 					
-					ResourceManager.loadAllTextures();
+//					ResourceManager.loadAllTextures();
 					
 					window.frmGameLauncher.pack();
 					window.frmGameLauncher.setVisible(true);
@@ -66,23 +64,22 @@ public class GameLauncherStart {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
-		});
+//			}
+//		});
 		
 	}
 	
-	/**
-	 * Create the application.
-	 */
 	public GameLauncherStart() {
 
 		gameManager.registerGame(new BallSimulator());
 		
 	}
 	
-	/**
-	 * Initialize the contents of the frame.
-	 */
+	@Override
+	public void start(Stage primaryStage) {
+		
+	}
+	
 	private void initialize() {
 		
 		frmGameLauncher = new JFrame();
@@ -164,6 +161,8 @@ public class GameLauncherStart {
 			Game gameToLaunch = ((GameIcon) e.getSource()).getGame();
 			
 			frmGameLauncher.setState(Frame.ICONIFIED);
+			
+//			DisplayManager.setDisplayTitle(gameToLaunch.toString());
 			
 			gameManager.launchGame(gameToLaunch, client);
 			

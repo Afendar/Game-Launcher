@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.rawad.gamelauncher.gui.GameLauncher?>
+
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<fx:root type="GameLauncher" xmlns:fx="http://javafx.com/javafx" >
+	
+	<center>
+		<columnConstraints>
+			<ColumnConstraints hgrow="ALWAYS"/>
+			<ColumnConstraints hgrow="ALWAYS"/>
+		</columnConstraints>
+		
+		<rowConstraints>
+			<RowConstraints vgrow="ALWAYS" />
+			<RowConstraints vgrow="ALWAYS" />
+		</rowConstraints>
+	</center>
+	
+</fx:root>
