@@ -2,21 +2,12 @@
 
 <?import com.rawad.gamelauncher.gui.GameLauncher?>
 
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 
 <fx:root type="GameLauncher" xmlns:fx="http://javafx.com/javafx" >
 	
 	<center>
-		<columnConstraints>
-			<ColumnConstraints hgrow="ALWAYS"/>
-			<ColumnConstraints hgrow="ALWAYS"/>
-		</columnConstraints>
-		
-		<rowConstraints>
-			<RowConstraints vgrow="ALWAYS" />
-			<RowConstraints vgrow="ALWAYS" />
-		</rowConstraints>
+		<FlowPane fx:id="gameIconHolder" />
 	</center>
 	
 </fx:root>
