@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE properties>
+<properties>
+    <icon>res\game_icon.png</icon>
+    <name>Ball Simulator</name>
+    <version>1.0</version>
+</properties>

@@ -1,20 +1,17 @@
 package com.rawad.gamelauncher.gui;
 
-import com.rawad.gamehelpers.resources.ResourceManager;
-import com.rawad.gamehelpers.resources.TextureResource;
+import java.io.File;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class IconHolder extends ImageView {
 	
-	private TextureResource icon;
-	
-	public IconHolder(final int iconLocation) {
+	public IconHolder(File iconFile) {
 		super();
 		
-		icon = ResourceManager.getTextureObject(iconLocation);
-		
-		icon.setOnloadAction((texture) -> setImage(texture.getTexture()));
+		Image image = new Image(iconFile.getAbsolutePath());
+		setImage(image);
 		
 	}
 	

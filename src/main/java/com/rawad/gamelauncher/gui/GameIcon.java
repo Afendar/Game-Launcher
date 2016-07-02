@@ -1,33 +1,24 @@
 package com.rawad.gamelauncher.gui;
 
-import com.rawad.gamehelpers.client.GameTextures;
-import com.rawad.gamehelpers.game.Game;
+import com.rawad.gamelauncher.files.GameProperties;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 public class GameIcon extends BorderPane {
-	
-	private Game game;
 
 	private IconHolder iconHolder;
 	private Label nameHolder;
 	
-	public GameIcon(Game game) {
+	public GameIcon(GameProperties gameProperties) {
 		super();
 		
-		this.game = game;
-		
-		iconHolder = new IconHolder(GameTextures.findTexture(GameTextures.GAME_ICON));
+		iconHolder = new IconHolder(gameProperties.getIcon());
 		this.setCenter(iconHolder);
 		
-		nameHolder = new Label(game.getName());
+		nameHolder = new Label(gameProperties.getName() + "(v" + gameProperties.getVersion() + ")");
 		this.setBottom(nameHolder);
 		
-	}
-	
-	public Game getGame() {
-		return game;
 	}
 	
 }
