@@ -14,6 +14,7 @@ public class GameProperties extends DataContainer {
 	private String name;
 	private String version;
 	
+	private File jar;
 	private File icon;
 	
 	/**
@@ -42,6 +43,20 @@ public class GameProperties extends DataContainer {
 	 */
 	public void setVersion(String version) {
 		this.version = version;
+	}
+	
+	/**
+	 * @return the jar
+	 */
+	public File getJar() {
+		return jar;
+	}
+	
+	/**
+	 * @param jar the jar to set
+	 */
+	public void setJar(File jar) {
+		this.jar = jar;
 	}
 	
 	/**

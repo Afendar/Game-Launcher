@@ -1,12 +1,15 @@
 package com.rawad.gamelauncher.main;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.rawad.gamelauncher.files.FileLoader;
 import com.rawad.gamelauncher.files.GameLauncherConfigurations;
 import com.rawad.gamelauncher.files.GameProperties;
+import com.rawad.gamelauncher.game.Game;
 import com.rawad.gamelauncher.gui.GameIcon;
 
 import javafx.fxml.FXML;
@@ -19,15 +22,21 @@ import javafx.stage.Stage;
 
 public class GameLauncher {
 	
+	private Stage stage;
+	
 	private BorderPane root;
 	
 	@FXML private FlowPane gameIconHolder;
 	
+	private ArrayList<Game> games;
+	
 	public void init() {
+		
+		games = new ArrayList<Game>();
 		
 		root = new BorderPane();
 		
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(getClass().getSimpleName()));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(getClass().getSimpleName() + ".fxml"));
 		fxmlLoader.setController(this);
 		fxmlLoader.setRoot(root);
 		
@@ -37,12 +46,9 @@ public class GameLauncher {
 			ex.printStackTrace();
 		}
 		
-		// Use Runtime.getRuntime().exec("java -jar 'GameName'.jar"); to launch game in a different process (Method
-		// returns the Process object).
+		GameLauncherConfigurations gameLauncherConfigs = FileLoader.loadGameLauncherConfigs();
 		
-		GameLauncherConfigurations gameLaucnherConfigs = FileLoader.loadGameLauncherConfigs();
-		
-		File gameDirectory = gameLaucnherConfigs.getGamesDirectory();
+		File gameDirectory = gameLauncherConfigs.getGamesDirectory();
 		
 		if(!gameDirectory.isDirectory()) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Given game directory \"" + gameDirectory
@@ -58,9 +64,20 @@ public class GameLauncher {
 				
 				GameProperties gameProperties = FileLoader.loadGameProperties(gameFile);
 				
-				GameIcon gameIcon = new GameIcon(gameProperties);
-				gameIcon.setOnMouseClicked(e -> {
-					Logger.getLogger(getClass().getName()).log(Level.INFO, "Launching game...");
+				Game game = new Game(gameProperties, gameFile);
+				games.add(game);
+				
+				GameIcon gameIcon = new GameIcon(game);
+				gameIcon.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+					
+					if(game.isRunning()) return;
+					
+					Thread gameThread = new Thread(() -> {
+						launchGame(game);
+					}, gameProperties.getName() + " Thread");
+					gameThread.setDaemon(true);
+					gameThread.start();
+					
 				});
 				
 				gameIconHolder.getChildren().add(gameIcon);
@@ -71,37 +88,11 @@ public class GameLauncher {
 			
 		}
 		
-		/*/
-		ConfigurationsFileParser configFileParser = new ConfigurationsFileParser();
-		
-		Loader loader = new Loader();
-		
-		loader.loadLauncherConfigurations(configFileParser);
-		
-		File gamesDirectory = new File(configFileParser.getGamesDirectory());
-		
-		if(!gamesDirectory.isDirectory()) throw new IllegalArgumentException("The file given for the games directory"
-				+ " is not a directory.");
-		
-		File[] gameFolders = gamesDirectory.listFiles();
-		
-		GamePropertiesFileParser gamePropertiesFileParser = new GamePropertiesFileParser();
-		
-		for(File gameFolder: gameFolders) {
-			
-			if(!gameFolder.isDirectory()) continue;
-			
-			loader.loadGameProperties(gamePropertiesFileParser, gamesDirectory.getName(), gameFolder.getName());
-			
-			loader.register
-			
-			GameIcon gameIcon = new GameIcon();
-			
-		}/**/
-		
 	}
 	
 	public void setStage(Stage stage) {
+		
+		this.stage = stage;
 		
 		for(Node gameIcon: gameIconHolder.getChildren()) {
 			gameIcon.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
@@ -109,6 +100,42 @@ public class GameLauncher {
 			});
 		}
 		
+	}
+	
+	private void launchGame(Game game) {
+		
+		Logger.getLogger(getClass().getName()).log(Level.INFO, "Launching game...");
+		
+		GameProperties properties = game.getGameProperties();
+		
+		String jarPath = game.getGameFile().toPath().resolve(properties.getJar().getPath()).toAbsolutePath().toString();
+		
+		try {
+			
+			System.out.println("Running game from jar: " + jarPath);
+			
+			Process gameProcess = Runtime.getRuntime().exec("java -jar " + jarPath);
+			
+			game.setRunning(true);
+			
+			int exit = gameProcess.waitFor();
+			
+			Logger.getLogger(getClass().getName()).log(Level.INFO, properties.getName() + " exited with a code of "
+					+ exit);
+			
+		} catch (IOException ex) {
+			Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Failed to launch " + properties.getName(), ex);
+		} catch(InterruptedException ex) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error waiting for " + properties.getName()
+					+ " to exit", ex);
+		} finally {
+			game.setRunning(false);
+		}
+		
+	}
+	
+	@FXML private void requestClose() {
+		stage.close();
 	}
 	
 	public BorderPane getRoot() {

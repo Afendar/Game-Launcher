@@ -14,7 +14,8 @@ public class ConfigAndPropertiesFileMaker {
 		GameProperties ballSimProperties = new GameProperties();
 		ballSimProperties.setName("Ball Simulator");
 		ballSimProperties.setVersion("1.0");
-		ballSimProperties.setIcon(new File("res/game_icon.png"));
+		ballSimProperties.setJar(new File("Ball Simulator.jar"));
+		ballSimProperties.setIcon(new File("res/textures/game_icon.png"));
 		
 		FileLoader.saveGameProperties(ballSimProperties, new File(gameLauncherConfigs.getGamesDirectory().getPath() 
 				+ File.separatorChar + "Ball Simulator"));

@@ -7,10 +7,12 @@ import javafx.scene.image.ImageView;
 
 public class IconHolder extends ImageView {
 	
-	public IconHolder(File iconFile) {
+	public IconHolder(File gameFile, File iconFile) {
 		super();
 		
-		Image image = new Image(iconFile.getAbsolutePath());
+		String path = "file:" + gameFile.toPath().resolve(iconFile.getPath());
+		
+		Image image = new Image(path);
 		setImage(image);
 		
 	}

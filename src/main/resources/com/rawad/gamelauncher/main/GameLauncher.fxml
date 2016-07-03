@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+
+<fx:root type="BorderPane" xmlns:fx="http://javafx.com/javafx" >
+	
+	<top>
+		<MenuBar>
+			<menus>
+				<Menu text="Options">
+					<items>
+						<MenuItem text="Exit" onAction="#requestClose" />
+					</items>
+				</Menu>
+			</menus>
+		</MenuBar>
+	</top>
+	
+	<center>
+		<FlowPane fx:id="gameIconHolder" />
+	</center>
+	
+</fx:root>

@@ -74,7 +74,7 @@ public final class FileLoader {
 	}
 	
 	public static final void saveGameLauncherConfigs(GameLauncherConfigurations gameLauncherConfigs) {
-		
+			
 		saveFile(gameLauncherConfigs, FILE_GAME_LAUNCHER_CONFIGS);
 		
 	}
