@@ -2,6 +2,7 @@ package com.rawad.gamelauncher.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +13,7 @@ import com.rawad.gamelauncher.files.GameProperties;
 import com.rawad.gamelauncher.game.Game;
 import com.rawad.gamelauncher.gui.GameIcon;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -104,17 +106,19 @@ public class GameLauncher {
 	
 	private void launchGame(Game game) {
 		
-		Logger.getLogger(getClass().getName()).log(Level.INFO, "Launching game...");
-		
 		GameProperties properties = game.getGameProperties();
 		
-		String jarPath = game.getGameFile().toPath().resolve(properties.getJar().getPath()).toAbsolutePath().toString();
+		Logger.getLogger(getClass().getName()).log(Level.INFO, "Launching " + properties.getName() + "...");
+		
+		String jarPath = "" + game.getGameFile().toPath().resolve(properties.getJar().getPath()).toString() + "";
 		
 		try {
 			
-			System.out.println("Running game from jar: " + jarPath);
+			ProcessBuilder gameProcessBuilder = new ProcessBuilder("java", "-jar", jarPath);
+			gameProcessBuilder.redirectOutput(Redirect.INHERIT);
+			gameProcessBuilder.redirectError(Redirect.INHERIT);
 			
-			Process gameProcess = Runtime.getRuntime().exec("java -jar " + jarPath);
+			Process gameProcess = gameProcessBuilder.start();
 			
 			game.setRunning(true);
 			
@@ -130,6 +134,7 @@ public class GameLauncher {
 					+ " to exit", ex);
 		} finally {
 			game.setRunning(false);
+			Platform.runLater(() -> stage.show());
 		}
 		
 	}
