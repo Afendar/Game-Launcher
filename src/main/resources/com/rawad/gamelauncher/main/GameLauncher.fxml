@@ -13,6 +13,8 @@
 			<menus>
 				<Menu text="Options">
 					<items>
+						<MenuItem text="Change Games Folder" onAction="#changeGamesDirectory" />
+						<MenuItem text="Refresh Games" onAction="#refreshGamesList" />
 						<MenuItem text="Exit" onAction="#requestClose" />
 					</items>
 				</Menu>

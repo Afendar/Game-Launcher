@@ -5,10 +5,13 @@ import com.rawad.gamelauncher.game.Game;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 
-public class GameIcon extends BorderPane {
-
+public class GameIcon extends StackPane {
+	
 	private Game game;
+	
+	private BorderPane iconLayer;
 	
 	private IconHolder iconHolder;
 	private Label nameHolder;
@@ -20,11 +23,15 @@ public class GameIcon extends BorderPane {
 		
 		GameProperties gameProperties = game.getGameProperties();
 		
-		iconHolder = new IconHolder(game.getGameFile(), gameProperties.getIcon());
-		this.setCenter(iconHolder);
+		iconLayer = new BorderPane();
 		
+		iconHolder = new IconHolder(game.getGameFile(), gameProperties.getIcon());
 		nameHolder = new Label(gameProperties.getName() + " (v" + gameProperties.getVersion() + ")");
-		this.setBottom(nameHolder);
+		
+		iconLayer.setCenter(iconHolder);
+		iconLayer.setBottom(nameHolder);
+		
+		getChildren().addAll(iconLayer);
 		
 	}
 	

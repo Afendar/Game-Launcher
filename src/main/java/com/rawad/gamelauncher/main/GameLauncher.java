@@ -20,17 +20,20 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 public class GameLauncher {
+	
+	private GameLauncherConfigurations configs;
+	
+	private ArrayList<Game> games;
 	
 	private Stage stage;
 	
 	private BorderPane root;
 	
 	@FXML private FlowPane gameIconHolder;
-	
-	private ArrayList<Game> games;
 	
 	public void init() {
 		
@@ -48,17 +51,35 @@ public class GameLauncher {
 			ex.printStackTrace();
 		}
 		
-		GameLauncherConfigurations gameLauncherConfigs = FileLoader.loadGameLauncherConfigs();
+		configs = FileLoader.loadGameLauncherConfigs();
 		
-		File gameDirectory = gameLauncherConfigs.getGamesDirectory();
+		File gamesDirectory = configs.getGamesDirectory();
 		
-		if(!gameDirectory.isDirectory()) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Given game directory \"" + gameDirectory
+		findGames(gamesDirectory);
+		
+		addGames();
+		
+	}
+	
+	public void setStage(Stage stage) {
+		
+		this.stage = stage;
+		
+		addGuiListeners();
+		
+	}
+	
+	private void findGames(File gamesDirectory) {
+		
+		games.clear();
+		
+		if(!gamesDirectory.isDirectory()) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Given game directory \"" + gamesDirectory
 					.getAbsolutePath() + "\" isn't a directory. Using parent file instead.");
-			gameDirectory = gameDirectory.getParentFile();
+			gamesDirectory = gamesDirectory.getParentFile();
 		}
 		
-		for(File gameFile: gameDirectory.listFiles()) {
+		for(File gameFile: gamesDirectory.listFiles()) {
 			
 			if(!gameFile.isDirectory()) continue;
 			
@@ -69,21 +90,6 @@ public class GameLauncher {
 				Game game = new Game(gameProperties, gameFile);
 				games.add(game);
 				
-				GameIcon gameIcon = new GameIcon(game);
-				gameIcon.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-					
-					if(game.isRunning()) return;
-					
-					Thread gameThread = new Thread(() -> {
-						launchGame(game);
-					}, gameProperties.getName() + " Thread");
-					gameThread.setDaemon(true);
-					gameThread.start();
-					
-				});
-				
-				gameIconHolder.getChildren().add(gameIcon);
-				
 			} catch(Exception ex) {
 				Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to load game.", ex);
 			}
@@ -92,15 +98,46 @@ public class GameLauncher {
 		
 	}
 	
-	public void setStage(Stage stage) {
+	private void addGames() {
 		
-		this.stage = stage;
+		gameIconHolder.getChildren().clear();
+		
+		for(Game game: games) {
+			
+			GameIcon gameIcon = new GameIcon(game);
+			gameIcon.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+				
+				if(game.isRunning()) return;
+				
+				Thread gameThread = new Thread(() -> {
+					launchGame(game);
+				}, game.getGameProperties().getName() + " Thread");
+				gameThread.setDaemon(true);
+				gameThread.start();
+				
+			});
+			
+			gameIconHolder.getChildren().add(gameIcon);
+			
+		}
+		
+	}
+	
+	private void addGuiListeners() {
 		
 		for(Node gameIcon: gameIconHolder.getChildren()) {
 			gameIcon.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
 				if(mouseEvent.isPrimaryButtonDown()) stage.setIconified(true);
 			});
 		}
+		
+	}
+	
+	@FXML private void refreshGamesList() {
+		
+		findGames(configs.getGamesDirectory());
+		addGames();
+		addGuiListeners();
 		
 	}
 	
@@ -131,7 +168,7 @@ public class GameLauncher {
 			Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Failed to launch " + properties.getName(), ex);
 		} catch(InterruptedException ex) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error waiting for " + properties.getName()
-					+ " to exit", ex);
+			+ " to exit", ex);
 		} finally {
 			game.setRunning(false);
 			Platform.runLater(() -> stage.show());
@@ -139,8 +176,29 @@ public class GameLauncher {
 		
 	}
 	
+	@FXML private void changeGamesDirectory() {
+		
+		DirectoryChooser fileChooser = new DirectoryChooser();
+		
+		fileChooser.setInitialDirectory(configs.getGamesDirectory().getAbsoluteFile().getParentFile());
+		fileChooser.setTitle("Chooser Game Directory");
+		
+		File newGamesDir = fileChooser.showDialog(stage);
+		
+		if(newGamesDir == null) return;
+		
+		configs.setGamesDirectory(newGamesDir);
+		
+		refreshGamesList();
+		
+	}
+	
 	@FXML private void requestClose() {
+		
+		FileLoader.saveGameLauncherConfigs(configs);
+		
 		stage.close();
+		
 	}
 	
 	public BorderPane getRoot() {
